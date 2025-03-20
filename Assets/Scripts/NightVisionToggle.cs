@@ -15,7 +15,13 @@ public class NightVisionToggle : MonoBehaviour
     void Start()
     {
         nightVisionVolume.enabled = false;  
-        regularVolume.enabled = true;       
+        regularVolume.enabled = true;   
+
+        regularCamera.enabled = false;
+        nightVisionCamera.enabled = false;
+
+        regularCamera.enabled = true;
+         
     }
 
     void Update()
