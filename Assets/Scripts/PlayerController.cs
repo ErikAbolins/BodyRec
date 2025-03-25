@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private float rotationX = 0f;
 
+  
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -80,4 +83,5 @@ public class PlayerController : MonoBehaviour
             );
         }
     }
+
 }
