@@ -20,7 +20,10 @@ public class PlayerController : MonoBehaviour
     private float bobTimer;
     private Rigidbody rb;
     private float rotationX = 0f;
-
+    public GameObject gun;
+    public GameObject scanner;
+    private bool hasGun = false;
+    private bool hasScanner = false;
   
 
 
@@ -30,6 +33,8 @@ public class PlayerController : MonoBehaviour
         rb.freezeRotation = true;
         defaultCameraY = cameraTransform.localPosition.y;
         Cursor.lockState = CursorLockMode.Locked;
+        gun.SetActive(false);
+        scanner.SetActive(false);
     }
 
     void Update()
