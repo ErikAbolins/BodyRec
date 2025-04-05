@@ -65,6 +65,14 @@ using UnityEngine;
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, hitMask))
         {
             Debug.Log("Hit: " + hit.collider.name);
+
+            EnemyHealth enemy = hit.collider.GetComponentInParent<EnemyHealth>();
+
+            if (enemy != null)
+            {
+                Vector3 hitDirection = ray.direction;
+                enemy.TakeDamage(100, hit.point, hitDirection);
+            }
         }
 
         
