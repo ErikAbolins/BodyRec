@@ -10,6 +10,8 @@ public class GunController : MonoBehaviour
   public float recoilAmount = 0.1f;
   public float recoilRecovery = 5f;
   public LayerMask hitMask;
+  public float bulletHoleLifetime = 10f;
+  public GameObject bulletHolePrefab;
  
   [Header("Aiming Settings")]
   public Transform aimTransform;
@@ -54,30 +56,41 @@ public class GunController : MonoBehaviour
   }
  
   private void Shoot()
+{
+  nextFireTime = Time.time + fireRate;
+
+  Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+  RaycastHit hit;
+
+  if (Physics.Raycast(ray, out hit, Mathf.Infinity, hitMask))
   {
-    nextFireTime = Time.time + fireRate;
- 
-    Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-    RaycastHit hit;
-    if (Physics.Raycast(ray, out hit, Mathf.Infinity, hitMask))
+    Debug.Log("Hit: " + hit.collider.name);
+
+    // Check for enemy hit
+    EnemyRagdoll enemy = hit.collider.GetComponentInParent<EnemyRagdoll>();
+    if (enemy != null)
     {
-Debug.Log("Hit: " + hit.collider.name);
- 
-      EnemyRagdoll enemy = hit.collider.GetComponentInParent<EnemyRagdoll>();
-      if (enemy != null)
-      {
-        Vector3 hitDirection = ray.direction;
-        enemy.EnableRagdoll(hit.point, hitDirection);
-      }
+      Vector3 hitDirection = ray.direction;
+      enemy.EnableRagdoll(hit.point, hitDirection);
     }
- 
-    float recoilX = Random.Range(-0.05f, 0.05f) * recoilAmount;
-    float recoilY = Random.Range(0.1f, 0.2f) * recoilAmount;
-    float recoilZ = 0.1f * recoilAmount;
- 
-    recoilOffset += new Vector3(recoilX, recoilY, -recoilZ);
+    else if (bulletHolePrefab != null)
+    {
+      Quaternion bulletRotation = Quaternion.LookRotation(-hit.normal);
+      Vector3 bulletPosition = hit.point + hit.normal * 0.01f;
+
+      GameObject hole = Instantiate(bulletHolePrefab, bulletPosition, bulletRotation);
+      hole.transform.SetParent(hit.collider.transform);
+      Destroy(hole, bulletHoleLifetime);
+    }
   }
- 
+
+  float recoilX = Random.Range(-0.05f, 0.05f) * recoilAmount;
+  float recoilY = Random.Range(0.1f, 0.2f) * recoilAmount;
+  float recoilZ = 0.1f * recoilAmount;
+
+  recoilOffset += new Vector3(recoilX, recoilY, -recoilZ);
+}
+
   private void ApplyRecoil()
   {
 recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, Time.deltaTime * recoilRecovery);
