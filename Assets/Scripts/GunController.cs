@@ -18,11 +18,15 @@ public class GunController : MonoBehaviour
     public float aimSpeed = 10f;
 
     [Header("Sound Settings")]
-    public AudioClip shootSound;  // Drag your shooting sound effect here in the Inspector
-    private AudioSource audioSource;  // Reference to the AudioSource component
+    public AudioClip shootSound;  
+    private AudioSource audioSource;  
 
     [Header("Blood Splatter Settings")]
-    public BloodSplatter bloodSplatterScript;  // Reference to the BloodSplatter script
+    public BloodSplatter bloodSplatterScript;  
+
+    [Header("Muzzle Flash Settings")]
+    public GameObject muzzleFlashPrefab;
+    public Transform muzzleFlashPoint;
 
     private float nextFireTime = 0f;
     private Vector3 originalPosition;
@@ -68,6 +72,13 @@ public class GunController : MonoBehaviour
     private void Shoot()
     {
         nextFireTime = Time.time + fireRate;
+
+        if (muzzleFlashPrefab != null && muzzleFlashPoint != null)
+        {
+            GameObject flash = Instantiate(muzzleFlashPrefab, muzzleFlashPoint.position, muzzleFlashPoint.rotation);
+            flash.transform.SetParent(muzzleFlashPoint);
+            Destroy(flash, 0.3f);
+        }
 
         // Play shooting sound
         if (audioSource != null && shootSound != null)
