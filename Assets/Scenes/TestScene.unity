@@ -1547,7 +1547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 1356371814}
   gunTransform: {fileID: 8565972283409799243}
-  fireRate: 0.2
+  fireRate: 0.4
   recoilAmount: 0.1
   recoilRecovery: 5
   hitMask:
@@ -5288,7 +5288,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 247
+    m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -14583,11 +14583,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 942159465830089167, guid: 7831982e5d5d1ad4390731a7830bc339,
+        type: 3}
+      propertyPath: health
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1089257466076014089, guid: 7831982e5d5d1ad4390731a7830bc339,
         type: 3}
       propertyPath: target
       value: 
       objectReference: {fileID: 47413661}
+    - target: {fileID: 3396628171438276761, guid: 7831982e5d5d1ad4390731a7830bc339,
+        type: 3}
+      propertyPath: m_TagString
+      value: Head
+      objectReference: {fileID: 0}
     - target: {fileID: 6547060411255556344, guid: 7831982e5d5d1ad4390731a7830bc339,
         type: 3}
       propertyPath: m_Name

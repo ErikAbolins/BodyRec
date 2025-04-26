@@ -50,8 +50,8 @@ public class EnemyAI : MonoBehaviour
     float speed = aiPath.velocity.magnitude;
     animator.SetFloat("Speed", speed);
 
-    Debug.Log("AI Speed: " + speed);
-    Debug.Log("Animator Speed: " + speed);
+    //Debug.Log("AI Speed: " + speed);
+    //Debug.Log("Animator Speed: " + speed);
 
     if (speed > 1f)
     {

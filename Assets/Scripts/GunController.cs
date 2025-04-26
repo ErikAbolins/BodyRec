@@ -6,7 +6,7 @@ public class GunController : MonoBehaviour
     public Transform gunTransform;
 
     [Header("Shooting Settings")]
-    public float fireRate = 0.2f;
+    public float fireRate = 0.5f; // Slower fire rate (increase for less spam)
     public float recoilAmount = 0.1f;
     public float recoilRecovery = 5f;
     public LayerMask hitMask;
@@ -38,8 +38,6 @@ public class GunController : MonoBehaviour
     {
         originalPosition = gunTransform.localPosition;
         originalFov = playerCamera.fieldOfView;
-        
-        // Get the AudioSource component from the gun
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -80,27 +78,35 @@ public class GunController : MonoBehaviour
             Destroy(flash, 0.3f);
         }
 
-        // Play shooting sound
         if (audioSource != null && shootSound != null)
         {
             audioSource.PlayOneShot(shootSound);
         }
 
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        float spread = isAiming ? 0.1f : 0.3f; // Less spread when aiming
+        Vector3 shotDirection = playerCamera.transform.forward + new Vector3(Random.Range(-spread, spread), Random.Range(-spread, spread), 0);
+
+        Ray ray = new Ray(playerCamera.transform.position, shotDirection);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, hitMask))
         {
             Debug.Log("Hit: " + hit.collider.name);
 
-            // Check for enemy hit
             EnemyRagdoll enemy = hit.collider.GetComponentInParent<EnemyRagdoll>();
             if (enemy != null)
             {
                 Vector3 hitDirection = ray.direction;
-                enemy.EnableRagdoll(hit.point, hitDirection);
 
-                // Trigger blood splatter
+                bool isHeadshot = IsHeadshot(hit.collider);
+                int damage = isHeadshot ? 3 : 1;
+                enemy.TakeDamage(damage, isHeadshot);
+
+                if (enemy.IsDead())
+                {
+                    enemy.EnableRagdoll(hit.point, hitDirection);
+                }
+
                 if (bloodSplatterScript != null)
                 {
                     bloodSplatterScript.SpawnBloodSplatter(hit.point, hit.normal);
@@ -117,12 +123,16 @@ public class GunController : MonoBehaviour
             }
         }
 
-        // Recoil
         float recoilX = Random.Range(-0.05f, 0.05f) * recoilAmount;
         float recoilY = Random.Range(0.1f, 0.2f) * recoilAmount;
         float recoilZ = 0.1f * recoilAmount;
 
         recoilOffset += new Vector3(recoilX, recoilY, -recoilZ);
+    }
+
+    private bool IsHeadshot(Collider hitCollider)
+    {
+        return hitCollider.CompareTag("Head");  
     }
 
     private void ApplyRecoil()
