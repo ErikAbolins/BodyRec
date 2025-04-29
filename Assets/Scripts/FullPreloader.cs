@@ -2,9 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
  
-public class AssetPreloader : MonoBehaviour
+public class FullPreloader : MonoBehaviour
 {
-  public static AssetPreloader Instance;
+  public static FullPreloader Instance;
  
   private List<Object> loadedAssets = new List<Object>();
  

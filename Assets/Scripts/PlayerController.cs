@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
     void HandleHeadBob()
     {
-        if (rb.velocity.magnitude > 0.1f)
+        if (rb.velocity.magnitude > 1f)
         {
             bobTimer += Time.deltaTime * bobFrequency;
             float bobOffset = Mathf.Sin(bobTimer) * bobAmount;
