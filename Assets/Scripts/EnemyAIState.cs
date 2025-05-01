@@ -4,7 +4,7 @@ using Pathfinding;
 public class EnemyAI : MonoBehaviour
 {
   public Transform[] patrolPoints;
-  public float viewDistance = 10f;
+  public float viewDistance = 20f;
   public float viewAngle = 90f;
   public Transform player;
   public LayerMask visionMask;
