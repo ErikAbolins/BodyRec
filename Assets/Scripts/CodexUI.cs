@@ -11,6 +11,8 @@ public class CodexUI : MonoBehaviour
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI contentText;
 
+    private Coroutine closeRoutine;
+
     void Awake()
     {
         if (Instance == null)
@@ -31,6 +33,18 @@ public class CodexUI : MonoBehaviour
         titleText.text = entry.title;
         contentText.text = entry.content;
         uiPanel.SetActive(true);
+
+        if (closeRoutine != null)
+        {
+            StopCoroutine(closeRoutine);
+        }
+        closeRoutine = StartCoroutine(AutoClose());
+    }
+
+    private IEnumerator AutoClose()
+    {
+        yield return new WaitForSeconds(8f);
+        Close();
     }
 
 
