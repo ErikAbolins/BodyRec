@@ -4,26 +4,24 @@ using UnityEngine;
 
 public class ScannerScreen : MonoBehaviour
 {
-    public Camera scannerCamera;
-    private bool isScanning = false;
+  public Camera scannerCamera;
+  public Scanner scanner;
 
-    void Update()
+  private bool isScanning = false;
+
+  void Update()
+  {
+    bool shouldBeScanning = scanner != null && scanner.ScannerIsActive() && scanner.HasBattery();
+
+    if (shouldBeScanning && !isScanning)
     {
-        if (Input.GetKey(KeyCode.F))
-        {
-            if (!isScanning)
-            {
-                isScanning = true;
-                scannerCamera.enabled = true;
-            }
-        }
-        else
-        {
-            if (isScanning)
-            {
-                isScanning = false;
-                scannerCamera.enabled = false;
-            }
-        }
+      isScanning = true;
+      scannerCamera.enabled = true;
     }
+    else if (!shouldBeScanning && isScanning)
+    {
+      isScanning = false;
+      scannerCamera.enabled = false;
+    }
+  }
 }
