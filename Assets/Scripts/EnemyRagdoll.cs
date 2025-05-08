@@ -12,6 +12,10 @@ public class EnemyRagdoll : MonoBehaviour
     private Collider[] ragdollColliders;
     private AIPath aiPath;
     private bool isDead = false;
+    public AudioSource sfxSource;
+    public AudioSource footstepSource;
+    public AudioClip deathClip;
+
 
     void Start()
     {
@@ -54,55 +58,74 @@ public class EnemyRagdoll : MonoBehaviour
     {
         Debug.Log("Enemy is dead");
         isDead = true;
+
+        // Stop footstep sounds
+        if (footstepSource != null)
+        {
+            footstepSource.Stop();
+        }
+
+        // Stop the idle sound directly (in case it's still playing)
+        if (sfxSource != null && sfxSource.isPlaying)
+        {
+            sfxSource.Stop();  // Stop any lingering idle sounds
+        }
+
+        // Play death sound
+        if (sfxSource != null && deathClip != null)
+        {
+            sfxSource.PlayOneShot(deathClip);
+        }
+
+        // Enable ragdoll physics
         EnableRagdoll(Vector3.zero, Vector3.zero);
     }
 
+
     public void EnableRagdoll(Vector3 hitPoint, Vector3 hitForce)
-{
-    
-
-    Debug.Log(gameObject.name + " ragdoll enabled!");  // Debug log to check if it's being triggered
-
-    isDead = true;
-
-    if (aiPath != null)
     {
-        aiPath.canMove = false;  // Stop AI movement
-        aiPath.enabled = false;  // Disable AI pathfinding
-    }
+        Debug.Log(gameObject.name + " ragdoll enabled!");  // Debug log to check if it's being triggered
 
-    if (animator != null)
-    {
-        animator.enabled = false;  // Disable animation
-    }
+        isDead = true;
 
-    // Enable physics for ragdoll parts
-    foreach (var rb in ragdollBodies)
-    {
-        rb.isKinematic = false;  // Enable physics on all rigidbodies
-    }
-
-    // Enable colliders for ragdoll parts
-    foreach (var col in ragdollColliders)
-    {
-        if (col != rootCollider) // Don't enable the root collider
+        if (aiPath != null)
         {
-            col.enabled = true;
+            aiPath.canMove = false;  // Stop AI movement
+            aiPath.enabled = false;  // Disable AI pathfinding
+        }
+
+        if (animator != null)
+        {
+            animator.enabled = false;  // Disable animation
+        }
+
+        // Enable physics for ragdoll parts
+        foreach (var rb in ragdollBodies)
+        {
+            rb.isKinematic = false;  // Enable physics on all rigidbodies
+        }
+
+        // Enable colliders for ragdoll parts
+        foreach (var col in ragdollColliders)
+        {
+            if (col != rootCollider) // Don't enable the root collider
+            {
+                col.enabled = true;
+            }
+        }
+
+        if (rootCollider != null)
+        {
+            rootCollider.enabled = false;  // Disable root collider
+        }
+
+        // Apply force to the ragdoll to simulate the impact
+        Rigidbody closestBody = GetClosestRigidbody(hitPoint);
+        if (closestBody != null)
+        {
+            closestBody.AddForce(hitForce * 50f, ForceMode.Impulse);  // Adjust force if necessary
         }
     }
-
-    if (rootCollider != null)
-    {
-        rootCollider.enabled = false;  // Disable root collider
-    }
-
-    // Apply force to the ragdoll to simulate the impact
-    Rigidbody closestBody = GetClosestRigidbody(hitPoint);
-    if (closestBody != null)
-    {
-        closestBody.AddForce(hitForce * 50f, ForceMode.Impulse);  // Adjust force if necessary
-    }
-}
 
 
     public void DisableRagdoll()
@@ -156,11 +179,4 @@ public class EnemyRagdoll : MonoBehaviour
     }
 
 
-    void Update()
-    {
-      if (Input.GetKeyDown(KeyCode.R))
-      {
-        EnableRagdoll(Vector3.zero, Vector3.zero);
-      }
-    }
 }

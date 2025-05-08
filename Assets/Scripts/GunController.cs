@@ -28,6 +28,16 @@ public class GunController : MonoBehaviour
     public GameObject muzzleFlashPrefab;
     public Transform muzzleFlashPoint;
 
+    [Header("Reload Settings")]
+    public float reloadDuration = 2f; // Time it takes to reload
+    public Vector3 reloadDipPosition = new Vector3(0, -0.2f, 0); // How much the gun dips during reload
+    private float reloadTimeRemaining = 0f;
+    private bool isReloading = false;
+
+    [Header("Ammo Settings")]
+    public int maxAmmoInMag = 7; // Max ammo per mag (M1911 typically has 7)
+    private int currentAmmoInMag;
+
     private float nextFireTime = 0f;
     private Vector3 originalPosition;
     private Vector3 recoilOffset;
@@ -39,13 +49,42 @@ public class GunController : MonoBehaviour
         originalPosition = gunTransform.localPosition;
         originalFov = playerCamera.fieldOfView;
         audioSource = GetComponent<AudioSource>();
+
+        // Initialize ammo count to full mag
+        currentAmmoInMag = maxAmmoInMag;
     }
 
     void Update()
     {
         HandleAiming();
         HandleShooting();
-        ApplyRecoil();
+
+        // If not reloading, handle recoil
+        if (!isReloading)
+        {
+            ApplyRecoil();
+        }
+
+        // Handle Reloading
+        if (isReloading)
+        {
+            reloadTimeRemaining -= Time.deltaTime;
+
+            // Move the gun down during reload
+            gunTransform.localPosition = Vector3.Lerp(originalPosition, originalPosition + reloadDipPosition, 1 - (reloadTimeRemaining / reloadDuration));
+
+            // If reload is complete, reset and bring the gun back up
+            if (reloadTimeRemaining <= 0f)
+            {
+                isReloading = false;
+                gunTransform.localPosition = originalPosition; // Gun comes back up
+                ReloadAmmo();
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.R) && currentAmmoInMag < maxAmmoInMag) // Trigger reload when pressing 'R'
+        {
+            StartReload();
+        }
     }
 
     private void HandleAiming()
@@ -61,7 +100,7 @@ public class GunController : MonoBehaviour
 
     private void HandleShooting()
     {
-        if (Time.time >= nextFireTime && Input.GetMouseButton(0))
+        if (Time.time >= nextFireTime && Input.GetMouseButton(0) && !isReloading && currentAmmoInMag > 0) // Don't shoot during reload or when out of ammo
         {
             Shoot();
         }
@@ -123,6 +162,10 @@ public class GunController : MonoBehaviour
             }
         }
 
+        // Decrease ammo in mag after shooting
+        currentAmmoInMag--;
+
+        // Apply recoil
         float recoilX = Random.Range(-0.05f, 0.05f) * recoilAmount;
         float recoilY = Random.Range(0.1f, 0.2f) * recoilAmount;
         float recoilZ = 0.1f * recoilAmount;
@@ -138,5 +181,20 @@ public class GunController : MonoBehaviour
     private void ApplyRecoil()
     {
         recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, Time.deltaTime * recoilRecovery);
+    }
+
+    private void StartReload()
+    {
+        if (!isReloading && currentAmmoInMag < maxAmmoInMag)
+        {
+            isReloading = true;
+            reloadTimeRemaining = reloadDuration; // Reset the reload timer
+        }
+    }
+
+    private void ReloadAmmo()
+    {
+        // Reset to 7 bullets (max mag capacity) after reload
+        currentAmmoInMag = maxAmmoInMag;
     }
 }
