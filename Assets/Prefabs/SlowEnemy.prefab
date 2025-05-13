@@ -2329,6 +2329,7 @@ GameObject:
   - component: {fileID: 1956164767557109651}
   - component: {fileID: 942159465830089167}
   - component: {fileID: 7821606558868530020}
+  - component: {fileID: 7223085520483057399}
   m_Layer: 3
   m_Name: SlowEnemy
   m_TagString: Untagged
@@ -2492,6 +2493,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rootCollider: {fileID: 1956164767557109651}
+  health: 20
+  headshotMultiplier: 3
+  sfxSource: {fileID: 0}
+  footstepSource: {fileID: 0}
+  deathClip: {fileID: 0}
 --- !u!114 &7821606558868530020
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2511,6 +2517,23 @@ MonoBehaviour:
   visionMask:
     serializedVersion: 2
     m_Bits: 1
+  idleSounds: []
+  footstepClip: {fileID: 0}
+  aggroClip: {fileID: 0}
+--- !u!114 &7223085520483057399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6547060411255556344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a70ff71c6598d34f9d61c7a92f30ead, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 10
+  damageInterval: 1.5
 --- !u!1 &6558021424072989855
 GameObject:
   m_ObjectHideFlags: 0
