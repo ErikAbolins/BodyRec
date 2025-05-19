@@ -481,7 +481,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   progressBar: {fileID: 511655450959976618}
   loadingText: {fileID: 7886780355425860520}
-  sceneToLoad: TestScene
+  sceneToLoad: GameScene
 --- !u!4 &1310186182
 Transform:
   m_ObjectHideFlags: 0
